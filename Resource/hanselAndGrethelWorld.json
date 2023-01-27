@@ -1,0 +1,131 @@
+{
+    "- location": [
+        {
+            "name": "path",
+            "predicates": {
+                "atloc": ["village", "forrest"]
+            }
+        },
+        {
+            "name": "village",
+            "predicates": {
+                "atloc": ["dads_house"]
+            }
+        },
+        {
+            "name": "forrest",
+            "predicates": {
+                "atloc": ["meadow","birds"]
+            }
+        },
+        {
+            "name": "candy_house",
+            "predicates": {
+                "atloc": ["cauldron","oven","candy"]
+            }
+        },    
+        {
+            "name": "dads_house",
+            "predicates": {
+                "atloc": ["white_pepples"]
+            }
+        },
+        {
+            "name": "meadow",
+            "predicates": {
+                "atloc": ["deep_forrest"]
+            }
+        },
+        {
+            "name": "deep_forrest",
+            "predicates": {
+                "atloc": ["candy_house"]
+            }
+        }
+    ],
+    "- character": [
+        {
+            "name": "hansel",
+            "predicates": {
+                "inventory": [],
+                "oblivious": ["forrest","meadow"],
+                "whereabouts": [
+                    "dads_house"
+                ]
+            }
+        },
+        {
+            "name": "grethel",
+            "predicates": {
+                "issick" : 1,
+                "oblivious": ["forrest","meadow"],
+                "inventory": ["bread_crumbs"],
+                "imobile": 1,
+                "whereabouts": [
+                    "dads_house"
+                ]
+            }
+        },
+        {
+            "name": "dad",
+            "predicates": {
+                "oblivious": ["meadow"],
+                "inventory": [],
+                "hate": ["witch"],
+                "whereabouts": [
+                    "dads_house"
+                ]
+            }
+        },
+        {
+            "name": "step_mom",
+            "predicates": {
+                "oblivious": ["meadow"],
+                "inventory": [],
+                "whereabouts": [
+                    "dads_house"
+                ]
+            }
+        }
+    ],
+    "- item" : [
+        {
+            "name": "white_pepples"
+        }
+    ],
+    "- consumable": [
+        {
+            "name": "candy",
+            "predicates": {}
+        },
+        {
+            "name": "bread_crumbs",
+            "predicates": {}
+        }
+    ],
+    "- monster" : [
+        {
+            "name": "witch",
+            "predicates": {
+                "inventory": [],
+                "hate" : ["dad"],
+                "oblivious": ["village"],
+                "whereabouts": [
+                    "deep_forrest"
+                ]
+            }
+        }
+    ],
+    "- hazzard" : [
+        {
+            "name" : "oven",
+            "predicates" : {
+            }
+        }
+    ],
+    "- critter" : [
+        {
+            "name" : "birds"
+        }
+    ]
+}

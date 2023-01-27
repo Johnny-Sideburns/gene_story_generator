@@ -1,0 +1,133 @@
+{
+    "- location": [
+        {
+            "name": "path",
+            "predicates": {
+                "atloc": ["village", "forrest"]
+            }
+        },
+        {
+            "name": "village",
+            "predicates": {
+                "atloc": ["moms_house"]
+            }
+        },
+        {
+            "name": "forrest",
+            "predicates": {
+                "atloc": ["grandmas_house", "meadow", "hunting_lodge"]
+            }
+        },
+        {
+            "name": "grandmas_house",
+            "predicates": {
+                "atloc": []
+            }
+        },
+        {
+            "name": "hunting_lodge",
+            "predicates": {
+                "atloc": []
+            }
+        },        
+        {
+            "name": "moms_house",
+            "predicates": {
+                "atloc": ["cake", "wine"]
+            }
+        },
+        {
+            "name": "meadow",
+            "predicates": {
+                "atloc": ["daisy", "lilac", "amaryllis"]
+            }
+        }
+    ],
+    "- character": [
+        {
+            "name": "pigone",
+            "actions" : ["move", "give", "pick_up"],
+            "predicates": {
+                "inventory": [],
+                "whereabouts": [
+                    "moms_house"
+                ]
+            }
+        },
+        {
+            "name": "pigtwo",
+            "predicates": {
+                "inventory": [],
+                "imobile": 1,
+                "whereabouts": [
+                    "grandmas_house"
+                ]
+            }
+        },
+        {
+            "name": "pigthree",
+            "predicates": {
+                "hate" : ["bigbadwolf"],
+                "inventory": ["gun"],
+                "whereabouts": [
+                    "hunting_lodge"
+                ]
+            }
+        },
+        {
+            "name": "mom",
+            "predicates": {
+                "hate" : ["bigbadwolf"],
+                "inventory": [],
+                "whereabouts": [
+                    "moms_house"
+                ]
+            }
+        }
+    ],
+    "- consumable": [
+        {
+            "name": "cake",
+            "predicates": {}
+        },
+        {
+            "name": "wine",
+            "predicates": {}
+        }
+    ],
+    "- weapon": [
+        {
+            "name": "gun",
+            "predicates": {}
+        }
+    ],
+    "- item": [
+        {
+            "name" :"daisy",
+            "predicates": {}
+        },
+        {
+            "name" :"lilac",
+            "predicates": {}
+        },
+        {
+            "name" :"amaryllis",
+            "predicates": {}
+        }
+    ],
+    "- monster" : [
+        {
+            "name": "bigbadwolf",
+            "actions" : ["move","kill","pick_up"],
+            "predicates": {
+                "cangobble": 1,
+                "inventory": [],
+                "oblivious": ["village", "grandmas_house"],
+                "whereabouts": [
+                    "path"
+                ]
+            }
+        }
+    ]
+    
+}

@@ -1,0 +1,151 @@
+{
+    "- location": [
+        {
+            "name": "path",
+            "predicates": {
+                "atloc": ["village", "forrest"]
+            }
+        },
+        {
+            "name": "village",
+            "predicates": {
+                "atloc": ["moms_house","gun"]
+            }
+        },
+        {
+            "name": "forrest",
+            "predicates": {
+                "atloc": ["grandmas_house", "meadow", "hunting_lodge"]
+            }
+        },
+        {
+            "name": "grandmas_house",
+            "predicates": {
+                "atloc": []
+            }
+        },
+        {
+            "name": "hunting_lodge",
+            "predicates": {
+                "atloc": []
+            }
+        },        
+        {
+            "name": "moms_house",
+            "predicates": {
+                "atloc": ["cake", "wine"]
+            }
+        },
+        {
+            "name": "meadow",
+            "predicates": {
+                "atloc": ["daisy", "lilac", "amaryllis"]
+            }
+        }
+    ],
+    "- character": [
+        {
+            "name": "redcap",
+            "actions" : ["move", "give", "pick_up"],
+            "predicates": {
+                "inventory": [],
+                "whereabouts": [
+                    "moms_house"
+                ]
+            }
+        },
+        {
+            "name": "grandma",
+            "predicates": {
+                "inventory": [],
+                "whereabouts": [
+                    "grandmas_house"
+                ]
+            }
+        },
+        {
+            "name": "hunter",
+            "predicates": {
+                "inventory": [],
+                "whereabouts": [
+                    "hunting_lodge"
+                ]
+            }
+        },
+        {
+            "name": "bigbadwolf",
+            "actions" : ["move","kill","pick_up"],
+            "predicates": {
+                "inventory": [],
+                "whereabouts": [
+                    "path"
+                ]
+            }
+        },
+        {
+            "name": "mom",
+            "actions" : ["tell_double"],
+            "quest" : ["(mk_goal_double inventory cake grandma redcap)(mk_goal_double inventory wine grandma redcap)(wherabouts moms_house redcap)"],
+            "goals" : ["(mk_goal_double inventory cake grandma redcap)(mk_goal_double inventory wine grandma redcap)(wherabouts moms_house redcap)"],
+            "predicates": {
+                "inventory": [],
+                "whereabouts": [
+                    "moms_house"
+                ]
+            }
+        }
+    ],
+    "- consumable": [
+        {
+            "name": "cake",
+            "predicates": {}
+        },
+        {
+            "name": "wine",
+            "predicates": {}
+        }
+    ],
+    "- weapon": [
+        {
+            "name": "gun",
+            "predicates": {}
+        }
+    ],
+    "- item": [
+        {
+            "name" :"daisy",
+            "predicates": {}
+        },
+        {
+            "name" :"lilac",
+            "predicates": {}
+        },
+        {
+            "name" :"amaryllis",
+            "predicates": {}
+        }
+    ],
+    "- pred": [
+        {
+            "name": "inventory",
+            "predicates": {}
+        },
+        {
+            "name": "whereabouts",
+            "predicates": {}
+        },
+        {
+            "name": "atloc",
+            "predicates": {}
+        },
+        {
+            "name": "isdead",
+            "predicates": {}
+        },
+        {
+            "name": "isasleep",
+            "predicates": {}
+        }
+    ]
+    
+}
