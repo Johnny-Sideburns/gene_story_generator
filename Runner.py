@@ -13,8 +13,7 @@ data = (world,dom,l1)
 
 gsg = GeneStoryGenerator.GeneStoryGenerator(data, planApi=PlanApi.FD_Api, seed = '', tensionCurve = ([0,1,2,3,4,5,6,7],[0,1,2,4,6,5,2.5,0]))
 
-gsg.custom_problem(gsg.world,gsg.tmpProp,"(issaved grandma) (issaved redcap)")#, metric="(:metric minimize (total-cost))\n")
-
+gsg.custom_problem(gsg.world,gsg.tmpProp,"(issaved grandma) (issaved redcap)")
 plan = gsg.run_planner()
 
 print(plan)
@@ -40,4 +39,4 @@ t2 = time.time()
 
 t = t2 - t1
 
-print(f"\nin {time} seconds")
+print(f"\nin {t} seconds")
