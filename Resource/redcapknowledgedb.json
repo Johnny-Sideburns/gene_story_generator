@@ -1,6 +1,0 @@
-{
-    "mom": ["grandma","redcap","grandmas_house", "meadow","village", "forrest","path","moms_house","cake","wine"],
-    "redcap" : ["grandma","mom","grandmas_house","village", "forrest","path","moms_house"],
-    "grandma": ["grandmas_house", "forrest"],
-    "bigbadwolf" : ["grandma","grandmas_house","mom" ,"moms_house", "village", "redcap","forrest"]
-}

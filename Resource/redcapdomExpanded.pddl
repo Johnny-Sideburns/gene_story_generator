@@ -109,7 +109,7 @@
 (:action eat_bait
     :parameters (?mon - monster ?trap - trap ?bait - consumable ?loc - location)
     :precondition (and (whereabouts ?loc ?mon) (atloc ?trap ?loc) (isset ?trap ?bait) (not (isasleep ?mon)) (not (isdead ?mon)) (not (isweakened ?mon)))
-    :effect (and (isweakened ?mon))
+    :effect (and (isweakened ?mon) (not (isset ?trap ?bait)))
 )
 (:action push_into_hazzard
     :parameters (?char1 - character ?char2 - character ?mon - character ?haz - hazzard ?loc - location)

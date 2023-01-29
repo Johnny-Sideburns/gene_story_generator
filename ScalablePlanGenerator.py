@@ -7,7 +7,7 @@ import pprint
 import Critic
 
 class ScalablePlanGenerator:
-    def __init__(self, data, planApi = PlanApi.Cloud_Planner_Api, tmpProbnm = "tmp/tmpProb.pddl", tmpDomnm = 'tmp/tmpDom.pddl', seed = '', tensionCurve = ([0,1,2,3,4,5,6],[0,1,2,4,6,3,0])):
+    def __init__(self, data, planApi = PlanApi.Cloud_Planner_Api, tmpProbnm = "tmp/tmpProb.pddl", tmpDomnm = 'tmp/tmpDom.pddl', seed = '', tensionCurve = ([0,1,2,3,4,5,6,7],[0,1,2,4,6,5,2.5,0])):
         world = data[0]
         domain = data[1]
         costLexicon = data[2]
@@ -97,7 +97,7 @@ class ScalablePlanGenerator:
     # returns:
     # a list of tupples containing (plan,chromosome,grade)
 
-    def gene_story(self, noS = 5, breeders = 15, masterGenes = 10, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalize_critic = True, show = False):
+    def gene_story(self, noS = 5, breeders = 15, masterGenes = 5, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalize_critic = True, show = False):
         storyBook = []
         rejects = []
         arrangedStories = []
@@ -110,15 +110,18 @@ class ScalablePlanGenerator:
             print(gen)
             
             #genes = copy.deepcopy(arrangedStories[:masterGenes])
-            #genes = genes + self.split_story_dna(arrangedStories[:breeders])
-            genes = self.split_story_dna(arrangedStories[:breeders])
+            #genes = genes + self.split_story_dna2(arrangedStories[:breeders])
+            genes = self.split_story_dna2(arrangedStories[:breeders])
             nextGen = arrangedStories[:masterGenes]
             #print( nextGen)
 
             kids = 0
-            while (kids < noC *3 and len(nextGen) < noC + masterGenes):
+            while ((kids < noC and len(nextGen) < noC + masterGenes) or len(nextGen) <= masterGenes):
                 #print(f"ping {len(nextGen)} kids, attempts {kids}")
-                g = random.choice(genes)
+                if (len(genes) >= 1):
+                    g = random.choice(genes)
+                else:
+                    g = genes[0]
                 g = self.giantTortoise.mutate_dna(g[2], genes)
                 addit = True
 
@@ -127,6 +130,7 @@ class ScalablePlanGenerator:
                     if(self.giantTortoise.dna_is_same(p[2], g)):
                         addit = False
                         break
+                            
 
                 """
                 """
@@ -138,39 +142,53 @@ class ScalablePlanGenerator:
 
                 if addit:
                     g = self.graded_scalable_story(g, maxDNALength, show)
+                    
                     if (g[0] == '' or g[1] >= 2):
                         rejects.append(g[2])
-                        kids += 1
                     else:
-                        nextGen.append(g)
-                        kids += 2
+                        goforit = True
+                        for s in nextGen:
+                            if g[0] == s[0]:
+                                goforit = False
+                                break
+                        if (goforit):
+                            nextGen.append(g)
                 kids += 1
 
-            storyBook = nextGen
-            if(not (len(nextGen) < noC + masterGenes)):
-                pass
+            nextGen
+
+            #if(not (len(nextGen) < noC + masterGenes)):
+            #    pass
+            storyBook = []
             arrangedStories = []
-            for s in storyBook:
-                if not self.contains_duplicate_dna(s,arrangedStories):
-                    arrangedStories.append(s)
+            for s in nextGen:
+                if not self.contains_duplicate_dna(s,storyBook):
+                    storyBook.append(s)
 
-            arrangedStories.sort(key = sortSecond)
+            storyBook.sort(key = sortSecond)
 
-            for sto in range(len(arrangedStories)):
-                if (sto > len(arrangedStories) - 1):
-                    break
-                grade = arrangedStories[sto][1]
-                #if the grade of the story is sufficiently bad, reject it..
+            n = 0
+            #print("grades {")
+            for story in storyBook:
+                grade = story[1]
+                goalgene= self.giantTortoise.makeGoalGene(story[2])
+            #    print(f"{goalgene}")
+            #    print("grade")
+                #if the grade of the story is sufficiently bad, add it to rejects, maybe kick it..
                 if (grade >= 2):
-                    rej = arrangedStories.pop(sto)
-                    
-                    rejects.append(rej[2])
-                    continue
-
-                #if a story is good enough end the gene-run early, default is 0.02    
+                    rejects.append(story[2])
+                    if (len(arrangedStories) < breeders):
+                        #arrangedStories.append(story)
+                        #arrangedStories = arrangedStories + self.the_new_batch((breeders - len(arrangedStories)), maxDNALength, normalize_critic)
+                        arrangedStories = copy.deepcopy(storyBook)
+                        break
+                #if a story is good enough end the genetic algorithm early, default is 0.02    
                 if(grade < acceptanceCriteria):
-                    return arrangedStories[:noS]
-
+                    n += 1
+                    if (n == noS):
+                        return storyBook
+                arrangedStories.append(story)
+            #print("}\n")
             #print(len(arrangedStories))
 
             #print()
@@ -180,14 +198,22 @@ class ScalablePlanGenerator:
     def the_new_batch(self, n, maxDNALength,normalize_critic):
         result = []    
         for i in range(n):
+
+ #           t = [['']]
+#            while t[0] == ['']:
             c = self.get_chromosome(maxDNALength)
-            result.append(self.graded_scalable_story(c,maxDNALength, normalize_critic=normalize_critic))
+            t = self.graded_scalable_story(c,maxDNALength, normalize_critic=normalize_critic)
+  #              print(t[0])
+            
+            result.append(t)
+            
             #arrangedStories.append(['',1.99,c])
         return result
 
-
+    #if a dna consists of multiple dnas this splits them and returns a list of split dnas
+    #the idea is that a good gene might pop op next to a less than good one and splitting them makes it more likely to get the good stuff
     def split_story_dna(self, stories):
-        dnaNo = len(stories) -1
+        dnaNo = len(stories)
         result = []
         for strandNo in range(dnaNo):
             if (len(stories[strandNo][2]) > 0):
@@ -195,6 +221,19 @@ class ScalablePlanGenerator:
                 for g in temp:
                     story = ([""],2,[g])
                     result.append(story)
+        return result
+
+
+    def split_story_dna2(self,stories):
+        result = []
+        for story in stories:
+            if (len(story[2]) > 1):
+                temp = copy.deepcopy(story[2])
+                for gene in temp:
+                    t = ([""],2,[gene])
+                    result.append(t)
+            else:
+                result.append(story)
         return result
 
     def scalable_plan_from_chromosome(self, c, max = 15,show = False):
@@ -291,7 +330,7 @@ world3 = "Resource/redCapWorldExpanded.json"
 dom4 = "Resource/grimmFairyTale.pddl"
 world4 = "Resource/hanselAndGrethelWorld.json"
 
-l1 = "tmp/RedRidingLex.json"
+l1 = "Resource/RedRidingLex.json"
 
 
 data= (world,dom,l1)
@@ -300,7 +339,7 @@ data3 = (world3,dom3,l1)
 data4 = (world4,dom4,l1)
 
 
-spg = ScalablePlanGenerator(data4, planApi=PlanApi.FD_Api)
+spg = ScalablePlanGenerator(data3, planApi=PlanApi.FD_Api)
 
 #chars = spg.world['- character']
 #tmpactions = spg.get_actions(chars)
@@ -341,6 +380,7 @@ plan = spg.run_planner()
 print(plan)
 print()
 """
+"""
 spg.custom_problem(spg.world,spg.tmpProp,"(following hansel dad) (whereabouts deep_forrest grethel)", metric="(:metric minimize (total-cost))\n")
 
 plan = spg.run_planner(True)
@@ -349,10 +389,9 @@ print(plan)
 print()
 
 """
-stories = spg.gene_story(maxGenerations=50, acceptanceCriteria= -1, noS= 10, noC=10, normalize_critic= False)
+stories = spg.gene_story(maxGenerations=50, acceptanceCriteria= 1.13e-10, noS= 2, noC=20, maxDNALength=7)#, normalize_critic= False)
 
 for s in stories:
     print()
     pprint.pprint(s[0])
     print(s[1])
-"""
