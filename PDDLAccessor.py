@@ -116,27 +116,3 @@ def lol_in_list_of_lol(l1, l2):
                 if (k == len(element)):
                     return True
     return False
-                            
-    
-
-"""
-#testing stuff beyond this point
-
-import pprint
-domainF = "tmp/AdventureDomCopy.pddl"
-problemF = "tmp/AdventureProbCopycopy.pddl"
-
-domain = fileAsString(domainF)
-actions = []
-n = domain.count("action")
-tempDom = domain
-while (n > 0):
-    tempDom = tempDom.partition("action ")[2]
-    action = parseAction(tempDom.partition("\n")[0], domain)
-    actions.append(action)
-    n -= 1
-
-for x in actions:
-    pprint.pprint(x, sort_dicts= False)
-    pass
-"""

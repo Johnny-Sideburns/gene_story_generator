@@ -63,7 +63,7 @@ class GeneStoryGenerator:
         score = self.critic_holder(tmp ,normalize= normalize_critic)
         return (tmp,score,c)
 
-    # inputs:
+    # takes:
     # nos = number of stories, breeders = how big a pool should be parents for the next generation, masterGenes = how many of the best breeders should move on to next generation
     # generations = max no of generations to run the algorithm for, maxGeneLength = the cutoff length of dna strands in a chromosome
     # acceptanceCriteria = is a number given for cutting the algorthim short/early if a satisfactory story has been found, set to negative to run through full no of generations
@@ -240,7 +240,7 @@ class GeneStoryGenerator:
         
         divi = (len(plancurve[0]))
         result = result/divi
-        #this really shouldn't be happening
+        #this shouldn't really be happening
         if result < 0:
             result = 2
         return result
@@ -276,43 +276,16 @@ testing stuff
 """
 import pprint
 
-dom = "Resource/redcapdomoriginal.pddl"
-world = "Resource/redCapWorldoriginal.json"
-
-dom2 = "Resource/redcapdom.pddl"
-world2 = "Resource/redCapWorld.json"
-
-dom3 = "Resource/redcapdomExpanded.pddl"
-world3 = "Resource/redCapWorldExpanded.json"
-
-dom4 = "Resource/grimmFairyTale.pddl"
-world4 = "Resource/hanselAndGrethelWorld.json"
+dom = "Resource/redcapdomExpanded.pddl"
+world = "Resource/redCapWorldExpanded.json"
 
 l1 = "Resource/RedRidingLex.json"
 
+data = (world,dom,l1)
 
-data= (world,dom,l1)
-data2 = (world2,dom2,l1)
-data3 = (world3,dom3,l1)
-data4 = (world4,dom4,l1)
+spg = GeneStoryGenerator(data, planApi=PlanApi.FD_Api)
 
-
-spg = GeneStoryGenerator(data3, planApi=PlanApi.FD_Api)
-
-"""
-spg.custom_problem(spg.world,spg.tmpProp,"(inside redcap bigbadwolf) (issaved redcap)")#(whereabouts moms_house redcap) (issaved grandma) (isdead hunter)")# (inventory cake grandma) (atloc wine village)")
-
-plan = spg.run_planner(True)
-print(plan)
-spg.custom_problem(spg.world,spg.tmpProp,"(whereabouts moms_house grandma)")
-
-plan = spg.run_planner(True)
-print(plan)
-#story = (plan, spg.critic_holder(plan))
-#print(story)
-"""
-
-spg.custom_problem(spg.world,spg.tmpProp,"(issaved grandma) (issaved redcap) (not (issick grandma))")#, metric="(:metric minimize (total-cost))\n")
+spg.custom_problem(spg.world,spg.tmpProp,"(issaved grandma) (issaved redcap)")#, metric="(:metric minimize (total-cost))\n")
 
 plan = spg.run_planner()
 
