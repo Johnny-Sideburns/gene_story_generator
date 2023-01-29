@@ -6,7 +6,7 @@ import ProblemWriter
 import pprint
 import Critic
 
-class ScalablePlanGenerator:
+class GeneStoryGenerator:
     def __init__(self, data, planApi = PlanApi.Cloud_Planner_Api, tmpProbnm = "tmp/tmpProb.pddl", tmpDomnm = 'tmp/tmpDom.pddl', seed = '', tensionCurve = ([0,1,2,3,4,5,6,7],[0,1,2,4,6,5,2.5,0])):
         world = data[0]
         domain = data[1]
@@ -339,7 +339,7 @@ data3 = (world3,dom3,l1)
 data4 = (world4,dom4,l1)
 
 
-spg = ScalablePlanGenerator(data3, planApi=PlanApi.FD_Api)
+spg = GeneStoryGenerator(data3, planApi=PlanApi.FD_Api)
 
 #chars = spg.world['- character']
 #tmpactions = spg.get_actions(chars)
@@ -373,23 +373,18 @@ plan = spg.run_planner()
 
 print(plan)
 print()
+"""
+
+"""
+"""
 spg.custom_problem(spg.world,spg.tmpProp,"(isdead bigbadwolf) (not (issick grandma))", metric="(:metric minimize (total-cost))\n")
 
 plan = spg.run_planner()
 
 print(plan)
 print()
-"""
-"""
-spg.custom_problem(spg.world,spg.tmpProp,"(following hansel dad) (whereabouts deep_forrest grethel)", metric="(:metric minimize (total-cost))\n")
 
-plan = spg.run_planner(True)
-
-print(plan)
-print()
-
-"""
-stories = spg.gene_story(maxGenerations=50, acceptanceCriteria= 1.13e-10, noS= 2, noC=20, maxDNALength=7)#, normalize_critic= False)
+stories = spg.gene_story(maxGenerations=150, acceptanceCriteria= 0.0001, noS= 2, noC=20, maxDNALength=10)#, normalize_critic= False)
 
 for s in stories:
     print()

@@ -1,13 +1,13 @@
 {
     "plan" : 
     {
-        "(swallow" : [1,2],
-        "(cesarean" : [1,-2.5],
-        "(eat_for_health" : [1,-1],
         "(share_info" : [1,1],
-        "(set_trap" : [2,4],
-        "(push_into_hazzard" : [2,-5],
-        "(go_to_sleep" : [1,-1]
+        "(swallow" : [1,2],
+        "(go_to_sleep" : [1,-1],
+        "(cesarean" : [1,-2.5],
+        "(set_ambush" : [2,4],
+        "(set_trap" : [1,-1],
+        "(push_into_hazzard" : [2,-5]
     }
     ,
     "state": {

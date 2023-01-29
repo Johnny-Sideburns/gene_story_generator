@@ -1,4 +1,8 @@
-import json
+"""
+a class for writing a PDDL problem file to go with a PDDL domain file from a "world" in the form of a dictx
+Auth: Jakob Ehlers
+"""
+#todo: un-objectify this class and turn it into a list of methods
 import PDDLController
 import PDDLAccessor
 
@@ -10,25 +14,12 @@ class PddlProblemWriter:
         file.close()
         self.domainName = self.domain.partition("domain")[2].partition(")")[0].split()[0]
         self.state = []
-        #self.objects = self.define_object_types()
-        
+
+    #constructs a header        
     def make_header(self, name):
         header = "(define (problem "+name+") (:domain "+self.domainName+")\n"
         return header
 
-    def objectify(self, dictionary):
-        keys = dictionary.keys()
-        keys = list(keys)
-
-        for k in keys:
-            area = dictionary[k]
-            for n in area:
-                self.objects[k].append(n["name"])
-                self.relate_area(n)
-
-        #print(self.objects)
-        #print(self.initial)
-        return dictionary[k]
 
     #sometimes I wish I was writing in a functional language
     def unwrap_dict(self, dictionary):
@@ -42,6 +33,7 @@ class PddlProblemWriter:
             initial = initial + self.predicate_string(dictionary[k])
         return (probjects, initial)
 
+    #takes a dictionary and if it contains a list of predicates, it will construct strings of predicates for use in the problem state 
     def predicate_string(self, thing):
         result = ""
         for t in thing:
@@ -59,6 +51,7 @@ class PddlProblemWriter:
                             result = result + temp + "\n"
         return result
 
+    #takes a object type as a string and a list of objects that belong to the given type and returns a space seperated string of objects finalized by the type 
     def probject_string(self, probT, l):
         result = "    "
         for i in l:
@@ -66,6 +59,8 @@ class PddlProblemWriter:
         result = result + probT + "\n"
         return result
 
+    #takes a file path name, problem objects, and an initial state as strings and constructs a PDDL problem file to be saved under the path name
+    # a goal and a metric can be supplied if so desired
     def create_problem_file(self, path, probjects, initial, goals = "", metric = ""):
         name = PDDLAccessor.name_extractor(path)
         file = open(path, "w")
@@ -75,28 +70,16 @@ class PddlProblemWriter:
         file.write("(:objects\n")
         file.write(probjects)
         file.write(")\n(:init\n")
-        #this needs to be made flexible
         if metric != "":
             file.write("    (= (total-cost) 0)\n")
         file.write(initial)
         file.write(")\n(:goal\n    (and\n    "+goals+"\n    )\n)\n")
         if metric != "":
             file.write(metric)
-        #file.write("(:metric minimize (total-cost))\n")
         file.write(")")
         file.close
 
+#takes a string and returns it withing a parenthesis
+# if only this had been added sooner, it would probably have seen even more use
 def parenthesise(str):
     return "(" + str + ")"
-"""
-testing stuff        
-
-thin = ppw.unwrap_dict(datac)
-ppw.create_problem_file("OVERHERE", thin[0], thin[1])
-
-"""
-
-#data = json.load(open('world.json','r'))
-
-#k = ppw.objectify(data)
-#ppw.create_problem_file("experiments")

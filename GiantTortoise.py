@@ -12,20 +12,19 @@ import copy
 class GiantTortoise:
     def __init__(self, domainF, problemS, seed):
         self.pc = PDDLController.PDDLController(domainF)#, problemS)
-        #self.goalPredicates = self.getGoalPredicates()
 
-        """
-        #pprint.pprint(fileToString(domainF), sort_dicts= False)
-        pprint.pprint(self.pc.domain, sort_dicts= False)
-        print()
-        pprint.pprint(self.pc.actions, sort_dicts= False)
-        """
         self.setup(problemS)
+        
         if (seed != ""):
             random.seed(seed)
 
-    
+    #method for setting up the class variables
+    #takes a pddl problem as a string
+
     def setup(self, problemS):    
+        
+        #this part contextualizes different theoretically achievable PDDL problem goals.
+        #this is done by going through domain action effects
         pist = []
         result = []
         for action in self.pc.actions:
@@ -46,6 +45,7 @@ class GiantTortoise:
             if (result.__contains__(temp) == False):
                 result.append(temp)
         self.goalPredicates = result
+
         self.probjects = self.pc.mapTyps2("objects", problemS)
         self.thesaurus = deeper_merge_dict_of_lists(expandDict(self.pc.pddltypes, self.probjects, "- "), self.probjects)
         self.genome = [len(self.goalPredicates)] + self.mapGenome(self.thesaurus)
@@ -78,10 +78,12 @@ class GiantTortoise:
         result = copy.deepcopy(dna1)
         result[roll][roll2] = copy.copy(dna2[roll3][roll2])
         return result
-
+    
+    #takes two dna strands, and makes them into one dna strand consisting of two dna strands
     def join_dna(self, dna1, genes, n = 0):
+        #this limits how many dna strands will be allowed to be joined together
+        #and how many times to try doing it unsuccesfully
         if (len(dna1) > 2 or n > 5):
-            #print("strand full")
             return self.mutate_dna(dna1, genes)
         k = random.randint(0, len(genes) -1)
         dna2 = genes[k][2]
@@ -94,6 +96,7 @@ class GiantTortoise:
         n += 1
         return self.join_dna(dna1,genes, n)
 
+    #takes a dna strand and spawns a random dna strand alongside it
     def dna_mitosis(self, dna):
         result = copy.deepcopy(dna)
         if (len(dna) > 2):
@@ -115,16 +118,6 @@ class GiantTortoise:
         random.shuffle(temp[roll][roll2])
         return temp
 
-    #offline till further notice
-    """
-    #takes a dna strand and shuffles a random gene
-    def mutate_dna_semi_randomly(self, dna, skipGenes = 0):
-        roll = random.randint(skipGenes,len(dna)-1)
-        random.shuffle(dna[roll])
-    """
-
-    
-
     #randomizing between a couple of different ways to mutate a dna strand
     def mutate_dna(self, dna, genes, i = 22000):
         n = random.randint(0,99)
@@ -135,59 +128,20 @@ class GiantTortoise:
             return result
         
         elif (n < 40):
-            #print("mutate")
-
             return self.mutate_dna_randomly(dna)
-        elif (n < 65):
-            #print("mix")
 
-            #k = i
-            #while (k == i):
-                
+        elif (n < 65):
             k = random.randint(0, len(genes) -1)
             return self.mix_dna(dna,genes[k][2])
+
         elif (n < 75):
-            #print("new")
             return self.mk_random_dna()
             
         elif (n < 90):
-            #print("split")
             return self.dna_mitosis(dna)
             
         else:
-            #print("join")
             return self.join_dna(dna,genes)
-
-    #creates a list of achievable goal-state expressions from action effects and domain predicates
-    #depricated
-    """
-    def getGoalPredicates(self):
-        result = []
-        temp = ""
-        for action in self.pc.actions:
-            for effect in action["effect"]["and"]:
-                ton = False
-                if (type(effect) is dict):
-                    #todo include when
-                    if (list(effect.keys()).__contains__("not")):
-                        ton = True
-                        effect = effect["not"]
-                    elif (list(effect.keys()).__contains__("forall")):
-                        effect = effect["forall"][1]
-                        print(effect)
-                    else: continue
-                for pred in self.pc.predicates:
-                    if (pred.count(effect.split()[0]) > 0):
-                        if (ton):
-                            temp = "(not " + pred + ")"
-                            break
-                        else:
-                            temp = pred
-                            break
-                if (result.__contains__(temp) == False):
-                    result.append(temp)
-        return result
-    """
 
 
     #takes a dna strand and makes it into a goal-gene
@@ -321,34 +275,3 @@ def deeper_merge_dict_of_lists(d1,d2):
 """
 testing stuff
 """        
-"""
-import pprint
-import PDDLAccessor
-
-pd = "tmp/AdventureDomCopy.pddl"
-pp = "tmp/AdventureProbCopycopy.pddl"
-
-pd1 = "tmp/RedRidingHoodDom.pddl"
-pp1 = "tmp/RedRidingHoodProb.pddl"
-
-pp2 = "tmp/RedHoodProbTwo.pddl"
-
-problemS = PDDLAccessor.fileToString(pp2)
-dna = GiantTortoise(pd1, problemS, '')
-
-pprint.pprint(dna.thesaurus, sort_dicts=False)
-
-
-for x in dna.goalPredicates:
-    print(x)
-
-print()
-print(dna.genome)
-print()
-
-#pprint.pprint(dna.pc.probjects)
-print()
-pprint.pprint(dna.pc.pddltypes)
-print()
-pprint.pprint(dna.goalPredicates)
-"""

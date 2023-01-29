@@ -1,26 +1,25 @@
 """
 Class for holding domain info and applying it to pddl problems stuff
 auth: Jakob Ehlers
-todo: un-objectify this class and turn it into a list of methods
 """
+#todo: un-objectify this class and turn it into a list of methods
 import PDDLAccessor
 from IntermediateParser import *
 
-#I decoupled the problem from this part of the code, if there is residue it is merely superstition on the coders part...
+#I decoupled the problem from this part of the code, if there is residue it is merely superstition on the programmers part...
 class PDDLController:
     def __init__(self, domain):
         self.domainFile = domain
         self.domain = PDDLAccessor.fileToString(domain)
         #set up dicts for nested domain types
         self.pddltypes = self.mapTyps2("types", self.domain)
-        #self.probjects = self.mapTyps("objects", self.problem)
         
         #loop for creating the list of dicts of actions
         #reworking
         self.actions = []
         n = self.domain.count("(:action ")
         tempDom = self.domain
-        #print(n)
+        
         while (n > 0):
             tempDom = tempDom.partition("(:action ")[2]
             action = PDDLAccessor.parseAction(tempDom.partition("\n")[0], self.domain)
@@ -35,7 +34,7 @@ class PDDLController:
             if (len(temp) > 1):
                 self.predicates.append(temp)
 
-    #itterates the list of actions and returns an action with a matching name
+    #itterates the list of actions and returns an action with a matching name, and False on failure
     def getAction(self, name):
         for x in self.actions:
             if (x.get("name") == name):
@@ -66,20 +65,6 @@ class PDDLController:
         return result
 
     #returns a dict of the different types in the domain, well actually only the super and sub-types
-    def mapTyps(self, section, target):
-        typs = PDDLAccessor.getSection(section, target)
-        result = {}
-        i = typs.count("-")
-        while (i > 0):
-            kvpair = typs.partition("-")
-            k = "-" + kvpair[2].partition("\n")[0]
-            v = kvpair[0].rpartition("\n")[2].split()
-            result[k] = v
-            typs = typs.partition(k)[2]
-            i -=1
-        
-        return result
-
     def mapTyps2(self, section, target):
         typs = PDDLAccessor.getSection(section, target).partition(')')[0].strip().split('\n')
         result = {}
@@ -89,13 +74,12 @@ class PDDLController:
                 k = "-" + kvpair[2].partition("\n")[0]
                 v = kvpair[0].rpartition("\n")[2].split()
                 result[k] = v
-                #typs = typs.partition(k)[2]
             else:
                 result['- '+(l.strip())] = []
 
         return result
 
-    #a flexible version of applyAction, that applies an action to a given state
+    #a slightly more flexible version of applyAction, that applies an action to a given state
     def apply_action_to_state(self, actionString, state, thesaurus):
         name = actionString.partition("(")[2].partition(" ")[0]
         action = self.getAction(name)

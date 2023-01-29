@@ -48,6 +48,7 @@ def parseAction(name, domain):
                 }
     return action
 
+#self explanatory
 def copyFile(source, newFile):
     openFile = open(source)
     fileContent = openFile.read()
@@ -56,6 +57,7 @@ def copyFile(source, newFile):
     openFile.write(fileContent)
     openFile.close()
 
+#replaces the goal of a problem
 def changeGoal(prob, newGoal, newFile = ""):
     if (newFile == ""):
         newFile = prob
@@ -68,6 +70,8 @@ def changeGoal(prob, newGoal, newFile = ""):
     file.write(result)
     file.close()
 
+#takes a problem and a replaces the state
+#if needed it can save it as a new file
 def changeState(prob, newState, newFile = ""):
     if (newFile == ""):
         newFile = prob
@@ -80,21 +84,29 @@ def changeState(prob, newState, newFile = ""):
     file.write(result)
     file.close()
 
+#takes: a plan 
+# and splits it up nicely
 def plan_splitter(plan):
     result = re.sub(r'(;.*)', '', plan)
     result = result.strip()
     result = result.split('\n')
     return result
 
+#this is used for testing
 def printPlan(plan):
     openPlan = open(plan)
     print(openPlan.read())
     openPlan.close()
 
+#takes: a file path as a string
+#returns: a string of the file name without type indication, barring multiple periods in file name
 def name_extractor(path):
     name = path.rpartition('/')[2].partition('.')[0]
     return name
 
+#takes: a list of lists and a list of list of lists
+# and checks if the former is present in the latter
+#returns: bool
 def lol_in_list_of_lol(l1, l2):
     for element in l2:
         k = 1

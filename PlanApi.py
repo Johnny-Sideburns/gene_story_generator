@@ -1,26 +1,32 @@
+"""
+a class for acting as api for third party planners
+Auth: Jakob Ehlers
+"""
+
 import os
 from pprint import pprint
 import subprocess
 import sys
 import requests
 from PDDLAccessor import *
-import atexit
 
 sys.path.append('../')
 
-
+#parent class
 class Plan_Api:
+    #init takes a Pddl domain and problem file paths as strings
     def __init__(self, dom, prob):
         self.dom = dom
         self.prob = prob
 
+    #update the parameters
     def updateParams(self):
         pass
 
+    #run the plan and return it
     def get_plan(self):
         pass
-"""
-"""
+
 #magic from fast-downward
 DRIVER_DIR = os.path.abspath(os.path.dirname(__file__))
 REPO_ROOT_DIR = os.path.dirname(DRIVER_DIR)
@@ -38,29 +44,18 @@ class FD_Api(Plan_Api):
         dom = "gene_story_generator\\tmp\\" + name_extractor(self.dom) + ".pddl"
         prob = "gene_story_generator\\tmp\\" + name_extractor(self.prob) + ".pddl"
         self.parameters = [
-            #"downward\\misc\\tests\\benchmarks\\gripper\\domain.pddl",
-            #"downward\\misc\\tests\\benchmarks\\gripper\\prob01.pddl",
-            #"gene_story_generator\\tmp\\domdom.pddl",
-            #"gene_story_generator\\tmp\\probcopy.pddl",
-            #"--evaluator",
-            #"--debug",
-            
+
             dom,
             prob,
 
             "--search-options",
-
-            #"--run all",
             "--search",
-            #"--evaluator",
-            #"hff=ff()", 
-            #"hcea=cea()", 
+            
             "lazy_greedy([ff(), cea()], max_time = 5, preferred=[ff(), cea()])"
             #"astar(lmcut())",
             #"astar(ff())"
             #"astar(lmcount(lm_rhw()))"
             #"astar(cegar())",
-            #"--sas-file"
             #"astar(blind())"
 
             #"eager(epsilon_greedy(cegar()), verbosity=silent)"
@@ -85,7 +80,6 @@ class FD_Api(Plan_Api):
 
         else: 
             pass
-            #subprocess.run(cmd, cwd=REPO_ROOT_DIR, capture_output = show)
         return ''
 
 class Cloud_Planner_Api(Plan_Api):
@@ -102,18 +96,16 @@ class Cloud_Planner_Api(Plan_Api):
     def get_plan(self, show = True):
 
         resp = requests.post('http://solver.planning.domains/solve', verify=False, json=self.parameters)
+        #these two cloud solvers were hosted on heroku, but ran into a sudden case of not working caused by a monetarily motivated policy change by the host company
         """
         resp = requests.post('http://calm-everglades-35579.herokuapp.com/solve', verify=False, json=self.parameters)
         resp = requests.post('http://dry-tundra-82186.herokuapp.com/solve', verify=False, json=self.parameters)
         """
         if (resp.status_code != 200):
             result = 'Response <' + str(resp.status_code) +'>: ' + resp.reason
-            #print(f'Response <{resp.status_code}>: {resp.reason}')
-            #print(result)
             return result
         resp = resp.json()
-        #with open("planFileNameHolder", 'w') as f:
-        #    f.write('\n'.join([act['name'] for act in resp['result']['plan']]))
+
         if (resp['status'] == 'error'):
             if (show):
                 print()
@@ -123,19 +115,13 @@ class Cloud_Planner_Api(Plan_Api):
         else:
             plan = ('\n'.join([act['name'] for act in resp['result']['plan']]))
             if(show):
-                #pprint(resp['result']['output'])
                 pprint(resp)
-        #print(plan)
         
         return plan
 
+#returns a string of the contents from a filename
 def read_file(fileName):
     openedFile = open(fileName)
     result = openedFile.read()
     openedFile.close()
     return result
-
-
-#rumBriber(parameters)
-
-#lmcount(lm_factory, admissible=false, optimal=false, pref=false, alm=true, lpsolver=CPLEX, transform=no_transform(), cache_estimates=true)

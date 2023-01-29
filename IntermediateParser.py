@@ -153,6 +153,7 @@ def applyFunction(expressions, lookUpbook, func, pddlProblem, acc, operator):
                 applyFunction(expressions["not"], lookUpbook, func, pddlProblem, acc, notOp)
 
         #to be done
+        #increasing is unsupported in current version
         if "increase" in expressions:
                 pass
                 """
