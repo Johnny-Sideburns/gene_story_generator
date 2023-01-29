@@ -1,6 +1,6 @@
 # Gene story generator
 # to run:
-# call scalablePlanGenerator.py
+# to be implemented
 
 # current version is dependant on having a working version of fastdownward in parrent directory
 # millage may varry
