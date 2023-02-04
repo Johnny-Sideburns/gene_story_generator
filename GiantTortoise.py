@@ -83,7 +83,7 @@ class GiantTortoise:
     def join_dna(self, dna1, genes, n = 0):
         #this limits how many dna strands will be allowed to be joined together
         #and how many times to try doing it unsuccesfully
-        if (len(dna1) > 2 or n > 5):
+        if (len(dna1) > 3 or n > 7):
             return self.mutate_dna(dna1, genes)
         k = random.randint(0, len(genes) -1)
         dna2 = genes[k][2]

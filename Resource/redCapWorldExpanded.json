@@ -38,7 +38,7 @@
         },
         {
             "name": "meadow",
-            "predicates": {
+            "predicates": { 
                 "atloc": ["flowers"]
             }
         }
@@ -49,7 +49,8 @@
             "actions" : ["move", "give", "pick_up"],
             "predicates": {
                 "inventory": ["cake","wine"],
-                "oblivious": ["grandmas_house","meadow"],
+                "oblivious": ["meadow"],
+                "islittlegirl": 1,
                 "whereabouts": [
                     "moms_house"
                 ]

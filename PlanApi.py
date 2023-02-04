@@ -38,11 +38,27 @@ class FD_Api(Plan_Api):
         self.dom = name_extractor(dom)
         self.prob = name_extractor(prob)
         self.sasPlan = "..\sas_plan"
+        self.searchEngine = "astar(ff())"
+        #why not give one of these a shot?
+        """
+            "astar(ff())"
+            "astar(lmcount(lm_rhw()))"
+            "astar(blind())"
+            "astar(cg())"
+            "eager(epsilon_greedy(cea()))"
+
+            "astar(cg(max_cache_size=1000000, transform=no_transform(), cache_estimates=true),max_time = 50)"
+            "astar(cg(max_cache_size=1000,cache_estimates=true))"
+
+            "astar(ff(transform=no_transform(), cache_estimates=true))"
+            "lazy_greedy([ff(), cea()], max_time = 5, preferred=[ff(), cea()])"
+        """
         self.updateParams()
         
     def updateParams(self):
         dom = "gene_story_generator\\tmp\\" + name_extractor(self.dom) + ".pddl"
         prob = "gene_story_generator\\tmp\\" + name_extractor(self.prob) + ".pddl"
+        engie = self.searchEngine
         self.parameters = [
 
             dom,
@@ -51,21 +67,7 @@ class FD_Api(Plan_Api):
             "--search-options",
             "--search",
             
-            "lazy_greedy([ff(), cea()], max_time = 5, preferred=[ff(), cea()])"
-            #"astar(lmcut())",
-            #"astar(ff())"
-            #"astar(lmcount(lm_rhw()))"
-            #"astar(cegar())",
-            #"astar(blind())"
-
-            #"eager(epsilon_greedy(cegar()), verbosity=silent)"
-
-            #"astar(cg(max_cache_size=1000000, transform=no_transform(), cache_estimates=true),max_time = 600)"
-            #"astar(cg(max_cache_size=1000,cache_estimates=true))"
-            #"merge_and_shrink(transform=no_transform(), cache_estimates=true, merge_strategy, shrink_strategy, label_reduction=<none>, prune_unreachable_states=true, prune_irrelevant_states=true, max_states=-1, max_states_before_merge=-1, threshold_before_merge=-1, verbosity=normal, main_loop_max_time=infinity)"
-
-            #"ff(transform=no_transform(), cache_estimates=true)"
-
+            engie
             ]
 
     #run driver

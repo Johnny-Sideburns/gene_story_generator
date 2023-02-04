@@ -42,9 +42,11 @@ class GeneStoryGenerator:
 
     #uses the problem writer to make a custom PDDL problem file
     def custom_problem(self, new_world, prob_name, goal = "", metric = ""):
+        """
         if (metric == "" and type(self.planner) is PlanApi.Cloud_Planner_Api):
             metric = "(:metric minimize (total-cost))\n"
             pass
+        """
         temp = self.writer.unwrap_dict(new_world)
         self.writer.create_problem_file(prob_name, temp[0], temp[1], goal, metric)
         self.update_problem_address(self.tmpProp)
@@ -70,7 +72,7 @@ class GeneStoryGenerator:
     # returns:
     # a list of tupples containing (plan,chromosome,grade) aka stories
 
-    def gene_story(self, noS = 5, breeders = 15, masterGenes = 5, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalize_critic = True, show = False):
+    def gene_story(self, noS = 5, breeders = 10, masterGenes = 5, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalize_critic = True, show = False):
         storyBook = []
         rejects = []
         arrangedStories = []
@@ -82,9 +84,9 @@ class GeneStoryGenerator:
 
             print(gen)
             
-            #genes = copy.deepcopy(arrangedStories[:masterGenes])
-            #genes = genes + self.split_story_dna(arrangedStories[:breeders])
-            genes = self.split_story_dna(arrangedStories[:breeders])
+            genes = copy.deepcopy(arrangedStories[:breeders])
+            genes = genes + self.split_story_dna(arrangedStories[:breeders])
+            #genes = self.split_story_dna(arrangedStories[:breeders])
             nextGen = arrangedStories[:masterGenes]
 
             kids = 0
