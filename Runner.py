@@ -11,11 +11,11 @@ l1 = "Resource/RedRidingLex.json"
 
 data = (world,dom,l1)
 
-tc = ([0,1,2,3,4,5,6,7,8,9,10,11],[0,1,2,3,4,5,6,7,5,3,1,0])
-tc2 = ([0,1,4,5,8,10,12,13,14,15,16],[0,1,2,3,4,5,6,5,4,3,1])
+tc = ([0,1,2,3,4,5,6,7,8,9],[0,1,2,3,5,7,8,5,2,1])
+tc2 = ([0,4,5,8,13,14,16,17,18,19],[0,1,2,3,4,5,4,3,1,0])
 
 
-gsg = GeneStoryGenerator.GeneStoryGenerator(data, seed = '', tensionCurve = tc2, planApi=PlanApi.FD_Api)
+gsg = GeneStoryGenerator.GeneStoryGenerator(data, seed = '', tensionCurve = tc, planApi=PlanApi.FD_Api)
 #gsg.planner.searchEngine = "astar(ff())"#'ehc(cea(), max_time = 30)'
 #gsg.planner.updateParams()
 
@@ -42,10 +42,9 @@ plan = gsg.run_planner()
 print(plan)
 print(gsg.critic_holder(PDDLAccessor.plan_splitter(plan)))
 print()
-"""
 t1 = time.time()
 
-stories = gsg.gene_story(maxGenerations=200, acceptanceCriteria= 0.002, noS= 4, noC=40, maxDNALength=10, masterGenes=8, breeders =20)#, normalize_critic= False)
+stories = gsg.gene_story(maxGenerations=200, acceptanceCriteria= 0.01, noS= 4, noC=40, maxDNALength=10, masterGenes=8, breeders =20)#, normalize_critic= False)
 
 for s in stories:
     print()
@@ -60,8 +59,9 @@ t = t2 - t1
 
 print(f"\nin {t} seconds")
 
-
 """
+"""
+
 
 """
 

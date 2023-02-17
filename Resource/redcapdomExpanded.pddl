@@ -14,7 +14,7 @@
     (whereabouts ?loc - location ?char - character)
     (hate ?char1 - character ?char2 - character)
     (inside ?vict - character ?mon - monster)
-    (oblivious ?o - omni ?char - character)
+    (oblivious ?o - location ?char - character)
     (atloc ?o - omni ?loc - location)
     (isdead ?char - character)
     (isasleep ?char - character)
@@ -60,7 +60,7 @@
     )
 )
 (:action share_info
-    :parameters (?char1 - character ?char2 - character ?loc - location ?inf - omni)
+    :parameters (?char1 - character ?char2 - character ?loc - location ?inf - location)
     :precondition (and (whereabouts ?loc ?char1) (whereabouts ?loc ?char2) (oblivious ?inf ?char1) (not (oblivious ?inf ?char2)) (not (isDead ?char1)) (not (isDead ?char2)) (not (hate ?char1 ?char2))
     (not (isasleep ?char1)) (not (isasleep ?char2))
     )
@@ -111,7 +111,7 @@
     :effect (and (isdead ?mon) (not (ambushing ?loc ?mon)) (not (isasleep ?mon)) (not (isweakened ?mon))
     )
 )
-(:action set_ambush
+(:action lay_ambush
     :parameters (?mon - monster ?loc - location)
     :precondition (and (whereabouts ?loc ?mon) (not (isdead ?mon)) (not (isasleep ?mon)) (not (ambushing ?loc ?mon)))
     :effect (and (ambushing ?loc ?mon) (imobile ?mon)
@@ -120,7 +120,6 @@
 (:action give_gift
     :parameters (?char1 ?char2 - character ?gift - gift ?loc - location)
     :precondition (and (whereabouts ?loc ?char1) (whereabouts ?loc ?char2) (inventory ?gift ?char1) (issick ?char2) (islittlegirl ?char1) (not (isdead ?char1)) (not (isdead ?char2)) (not (isasleep ?char1)) (not (hate ?char1 ?char2))
-    (forall (?mon - monster) (isdead ?mon))
     )
     :effect (and (not (inventory ?gift ?char1)) (inventory ?gift ?char2) (wellwished ?char2))
 )

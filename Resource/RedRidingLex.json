@@ -2,21 +2,31 @@
     "plan" : 
     {
         "(share_info" : [1,1],
-        "(swallow" : [1,1],
+        "(swallow" : [1,2],
         "(food_coma" : [1,1],
-        "(cesarean" : [1,-1],
-        "(set_ambush" : [1,1],
+        "(lay_ambush" : [1,2],
         "(set_trap" : [1,1],
-        "(eat_bait" : [1,-1],
+        "(cesarean" : [1,-2],
+        "(eat_bait" : [1,-2],
         "(push_into_hazzard" : [1,-2],
-        "(move" : [1,0],
         "(give_gift" : [1,-1],
         "(share_food" : [1,-1]
     }
     ,
     "state": {
+        "(move" : [1,0],
         "isswallowed" : 1,
-        "issaved" : -1
+        "issaved" : -1,
+        "(share_info" : [1,1],
+        "(swallow" : [1,1],
+        "(food_coma" : [1,1],
+        "(lay_ambush" : [1,1],
+        "(set_trap" : [1,1],
+        "(cesarean" : [1,-1],
+        "(eat_bait" : [1,-1],
+        "(push_into_hazzard" : [1,-2],
+        "(give_gift" : [1,-1],
+        "(share_food" : [1,-1]
     }
 
 }

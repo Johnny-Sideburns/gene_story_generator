@@ -49,7 +49,7 @@
             "actions" : ["move", "give", "pick_up"],
             "predicates": {
                 "inventory": ["cake","wine"],
-                "oblivious": ["meadow"],
+                "oblivious": ["meadow","grandmas_house"],
                 "islittlegirl": 1,
                 "whereabouts": [
                     "moms_house"
