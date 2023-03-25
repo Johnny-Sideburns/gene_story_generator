@@ -1,7 +1,7 @@
 ;Header and description
 (define (domain redcap_dom_ex)
 ;remove requirements that are not needed
-(:requirements :typing :conditional-effects :negative-preconditions :strips :disjunctive-preconditions :equality :action-costs :universal-preconditions)
+(:requirements :typing :conditional-effects :negative-preconditions :strips :disjunctive-preconditions :equality :action-costs :universal-preconditions :conditional-effects)
 (:types ;todo: enumerate types and their hierarchy here, e.g. car truck bus - vehicle
     character item location hazzard trap - omni
     gift consumable weapon - item
@@ -27,6 +27,8 @@
     (ambushing ?loc - location ?mon - character)
     (wellwished ?char - character)
     (islittlegirl ?char - character)
+    (isfull ?char - character)
+    (ishungry ?char - character)
 )
 ;define actions here
 (:action move
@@ -40,7 +42,8 @@
 )
 (:action pick_up
     :parameters (?char - character ?item - item ?loc - location)
-    :precondition (and (whereabouts ?loc ?char) (atloc ?item ?loc) (not (isdead ?char)) (not (isasleep ?char)) (not (cangobble ?char)))
+    :precondition (and (whereabouts ?loc ?char) (atloc ?item ?loc) (not (isdead ?char)) (not (isasleep ?char)) (not (cangobble ?char)) (not (issaved ?char))
+    )
     :effect (and (not (atloc ?item ?loc)) (inventory ?item ?char)
     )
 )
@@ -53,7 +56,7 @@
 )
 (:action food_coma
     :parameters (?char - monster ?loc - location)
-    :precondition (and (whereabouts ?loc ?char) (not (isasleep ?char)) (not (isdead ?char)) (not (ambushing ?loc ?char))
+    :precondition (and (whereabouts ?loc ?char) (not (isasleep ?char)) (not (isdead ?char)) (not (ambushing ?loc ?char)) (isfull ?char)
     (forall (?char1 - character) (or (not (whereabouts ?loc ?char1)) (not (hate ?char ?char1))) )
     )
     :effect (and (isasleep ?char)
@@ -72,7 +75,7 @@
     :precondition (and (whereabouts ?loc ?vict) (whereabouts ?loc ?mon) (cangobble ?mon) (not (= ?mon ?vict)) (not (hate ?mon ?vict)) (not (isDead ?mon)) (not (isasleep ?mon)) (not (inside ?vict ?mon)) (not (issaved ?vict)) (not (isweakened ?mon))
     (forall (?char - character) (or (not (whereabouts ?loc ?char)) (= ?char ?vict) (= ?char ?mon)))
     )
-    :effect (and (inside ?vict ?mon) (imobile ?mon) (not (whereabouts ?loc ?vict))
+    :effect (and (inside ?vict ?mon) (imobile ?mon) (not (whereabouts ?loc ?vict))  (when (not (ishungry ?mon)) (isfull ?mon)) (when (ishungry ?mon) (not (ishungry ?mon)))
     )
 )
 (:action cesarean
@@ -82,7 +85,7 @@
     :effect (and (not (inside ?bab ?mon)) (issaved ?bab) (whereabouts ?loc ?bab) (isweakened ?mon)
     )
 )
-(:action share_food
+(:action share_food_while_waiting
     :parameters (?char1 ?char2 - character ?item - consumable ?loc - location)
     :precondition (and (issick ?char1) (whereabouts ?loc ?char2) (inventory ?item ?char1) (whereabouts ?loc ?char1) (not (isdead ?char2)) (not (isasleep ?char2)) (not (cangobble ?char1)) (not (cangobble ?char2))
     (forall (?trap - trap) (and (atloc ?trap ?loc) (isset ?trap)))
@@ -120,6 +123,7 @@
 (:action give_gift
     :parameters (?char1 ?char2 - character ?gift - gift ?loc - location)
     :precondition (and (whereabouts ?loc ?char1) (whereabouts ?loc ?char2) (inventory ?gift ?char1) (issick ?char2) (islittlegirl ?char1) (not (isdead ?char1)) (not (isdead ?char2)) (not (isasleep ?char1)) (not (hate ?char1 ?char2))
+    (forall (?mon - monster) (or (not (whereabouts ?loc ?mon)) (isdead ?mon)))
     )
     :effect (and (not (inventory ?gift ?char1)) (inventory ?gift ?char2) (wellwished ?char2))
 )

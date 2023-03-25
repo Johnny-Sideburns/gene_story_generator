@@ -126,6 +126,7 @@
             "actions" : ["move","kill","pick_up"],
             "predicates": {
                 "cangobble": 1,
+                "ishungry": 1,
                 "inventory": [],
                 "hate" : ["hunter"],
                 "oblivious": ["village", "grandmas_house"],

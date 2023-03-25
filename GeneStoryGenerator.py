@@ -72,21 +72,20 @@ class GeneStoryGenerator:
     # returns:
     # a list of tupples containing (plan,chromosome,grade) aka stories
 
-    def gene_story(self, noS = 5, breeders = 10, masterGenes = 5, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalize_critic = True, show = False):
+    def gene_story(self, initial = 10, noS = 5, breeders = 10, masterGenes = 5, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalize_critic = True, show = False):
         storyBook = []
         rejects = []
         arrangedStories = []
 
         for gen in range(maxGenerations):
             if (len(arrangedStories) == 0):
-                arrangedStories = self.the_new_batch(breeders,maxDNALength,normalize_critic)
+                arrangedStories = self.the_new_batch(initial,maxDNALength,normalize_critic)
                 print("the new batch!")
 
             print(gen)
             
             genes = copy.deepcopy(arrangedStories[:breeders])
             genes = genes + self.split_story_dna(arrangedStories[:breeders])
-            #genes = self.split_story_dna(arrangedStories[:breeders])
             nextGen = arrangedStories[:masterGenes]
 
             kids = 0

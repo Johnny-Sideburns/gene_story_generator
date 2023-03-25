@@ -172,9 +172,8 @@ def applyFunction(expressions, lookUpbook, func, pddlProblem, acc, operator):
 
         #currently "when" only works in forall loop
         if "when" in expressions:
-        
-            condition = applyFunction(expressions["when"][0], lookUpbook, func, pddlProblem, acc, nonOp)
-            condition = applyFunction(condition, lookUpbook, precondCheck, pddlProblem, True, andOp)
+            #condition = applyFunction(expressions["when"][0], lookUpbook, func, pddlProblem, acc, nonOp)
+            condition = applyFunction(expressions["when"][0], lookUpbook, precondCheck, pddlProblem, True, andOp)
             if (condition):
                     acc = applyFunction(expressions["when"][1], lookUpbook, func, pddlProblem, acc, andOp)
 
