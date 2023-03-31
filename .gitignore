@@ -3,6 +3,6 @@
 __pycache__
 /trashcan
 /node_modules
-/tmp/*.*
-tmp/*.*
+/tmp/tmpDom.pddl
+/tmp/tmpProb.pddl
 *.class
