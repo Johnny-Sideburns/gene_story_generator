@@ -82,22 +82,30 @@ class GeneStoryGenerator:
                 arrangedStories = self.the_new_batch(initial,maxDNALength,normalize_critic)
                 print("the new batch!")
 
-            print(gen)
-            
             genes = copy.deepcopy(arrangedStories[:breeders])
-            genes = genes + self.split_story_dna(arrangedStories[:breeders])
+            genepool = genes + self.split_story_dna(genes)
+            
+            
             nextGen = arrangedStories[:masterGenes]
 
+            print(f"generation {gen}, genepool {len(genepool)}, blacklist {len(rejects)}")
             kids = 0
+
             while (kids < noC):
 
-                if (len(genes) >= 1):
-                    g = random.choice(genes)
+                #genepool = copy.deepcopy(genes)
+                
+                if (len(genepool) > 1):
+                    g = random.choice(genepool)
+                    genepool.remove(g)
                 else:
-                    g = genes[0]
-                g = self.giantTortoise.mutate_dna(g[2], genes)
+                    g = genepool[0]
+                
+                g = self.giantTortoise.mutate_dna(g[2], genepool)
                 addit = True
 
+                #print(f"g {g}")
+                #print(f"g {self.giantTortoise.makeGoalGene(g)}")
                 #is the dna already represented in the generation -don't bother adding it
                 for p in nextGen:
                     if(self.giantTortoise.dna_is_same(p[2], g)):
@@ -105,10 +113,10 @@ class GeneStoryGenerator:
                         break
 
                 #is the dna in the pool of rejects -don't bother adding it
-                for r in rejects:
-                    if(self.giantTortoise.dna_is_same(r, g)):
+                if addit:
+                    gg = self.giantTortoise.makeGoalGene(g)
+                    if(gg in rejects):
                         addit = False
-                        break
 
                 #if the dna is valid...
                 if addit:
@@ -117,18 +125,20 @@ class GeneStoryGenerator:
                     
                     #if the story is empty or REALLY bad reject it
                     if (g[0] == '' or g[1] >= 2):
-                        rejects.append(g[2])
+                        bg = self.giantTortoise.makeGoalGene(g[2])
+                        if (bg not in rejects):
+                            rejects.append(bg)
+
                     
                     else:
 
-                        goforit = True
                         #if a similar story is currently in the generation, don't add it
                         for s in nextGen:
                             if g[0] == s[0]:
-                                goforit = False
+                                addit = False
                                 break
                         
-                        if (goforit):
+                        if (addit):
                             nextGen.append(g)
                 kids += 1
 
@@ -148,12 +158,13 @@ class GeneStoryGenerator:
             
                 #if the grade of the story is sufficiently bad, add it to rejects, maybe kick it..
                 if (grade >= 2):
-                    rejects.append(story[2])
+                    bg = self.giantTortoise.makeGoalGene(story[2])
+                    if (bg not in rejects):
+                            rejects.append(bg)
                     if (len(arrangedStories) < breeders):
-                        #arrangedStories = arrangedStories + self.the_new_batch((breeders - len(arrangedStories)), maxDNALength, normalize_critic)
                         arrangedStories = copy.deepcopy(storyBook)
                         break
-                #if enough stories are good enough end the genetic algorithm early, default is 0.02    
+                #if enough stories are good enough end the genetic algorithm early
                 if(grade < acceptanceCriteria):
                     n += 1
                     if (n == noS):
@@ -230,7 +241,7 @@ class GeneStoryGenerator:
         return result
     
     #this is just a wrapper for returning an int, using the critic to compare the likenes of two curves represented by two tuples of two lists of ints ([x],[y])
-    def critic_holder(self, plan, normalize =True, overwhelmingFailureint = 2):
+    def critic_holder(self, plan, normalize = 'both', overwhelmingFailureint = 2):
         if plan == ['']:
             return overwhelmingFailureint
         plancurve = self.plan_to_curve(plan)

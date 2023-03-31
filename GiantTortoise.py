@@ -70,8 +70,8 @@ class GiantTortoise:
                 gene.append(temp)
         return [gene]
 
-    #takes two dna strands, and replaces a random gene from the first with the coresponing gene of the seccond
-    def mix_dna(self, dna1, dna2):
+    #takes two chromosomes, and replaces a random chromosome from the first with a chromosome of the seccond
+    def replace_chrom(self, dna1, dna2):
         roll = random.randint(0, len(dna1) -1)
         roll2 = random.randint(0, len(dna1[roll]) -1)
         roll3 = random.randint(0, len(dna2) -1)
@@ -79,12 +79,29 @@ class GiantTortoise:
         result[roll][roll2] = copy.copy(dna2[roll3][roll2])
         return result
     
-    #takes two dna strands, and makes them into one dna strand consisting of two dna strands
-    def join_dna(self, dna1, genes, n = 0):
-        #this limits how many dna strands will be allowed to be joined together
+    #takes two chromosomes, and makes them into one chromosome consisting of two chromosomes
+    def join_dna(self, host, genes, n = 0):
+        #this limits how many chromosomes will be allowed to be joined together
         #and how many times to try doing it unsuccesfully
+        if (len(host) > 3 or n > 50):
+            return self.mutate_dna(host,genes, random.randint(0,89))
+        
+        doner = random.choice(genes)[2]
+        donation = random.choice(doner)
+        child = copy.deepcopy(host)
+
+        for c in child:
+            if (self.same_chrom_goals([c],[donation])):
+                return self.join_dna(host,genes, n+1)
+        
+        child.append(donation)
+        
+        return child
+
+
+        """
         if (len(dna1) > 3 or n > 7):
-            return self.mutate_dna(dna1, genes)
+                 return self.mutate_dna(dna1, genes)
         k = random.randint(0, len(genes) -1)
         dna2 = genes[k][2]
         roll = random.randint(0, len(dna2) -1)
@@ -95,53 +112,108 @@ class GiantTortoise:
             return result
         n += 1
         return self.join_dna(dna1,genes, n)
+        """
 
-    #takes a dna strand and spawns a random dna strand alongside it
-    def dna_mitosis(self, dna):
+    #takes a chromosome and spawns a new random chromosome alongside it
+    def dna_mitosis(self, dna, n = 0):
         result = copy.deepcopy(dna)
-        if (len(dna) > 2):
+        if (len(dna) > 3):
             roll0 = random.randint(0, len(result) -1)
             result.pop(roll0) 
-        roll = random.randint(0, len(result) -1)
-        temp = self.mutate_dna_randomly([result[roll]])
-        if (self.dna_in_dnas(temp, result)):
+        roll = random.choice(result)
+        temp = self.mutate_dna_randomly([roll])
+        if (self.same_chrom_goals(temp, result)):
             return self.dna_mitosis(result)
         else:
             result = result + temp
+            #print(self.makeGoalGene(result))
             return result
 
-    #takes a dna strand and shuffles a random gene
+    #takes a chromosome and shuffles a random gene
     def mutate_dna_randomly(self, dna):
         roll = random.randint(0,len(dna)-1)
         roll2 = random.randint(0,len(dna[roll])-1)
         temp = copy.deepcopy(dna)
         random.shuffle(temp[roll][roll2])
         return temp
+    
+    #takes two chromosomes and takes genes at random from each to construct a new chromosome
+    def crossover_into_one(self, chromo, genepool):
+        child = []
+        if (len(chromo) > 1):
+            mom = [random.choice(chromo)]
+        else:
+            mom = chromo
+
+        dad = random.choice(genepool)[2]
+
+        if (len(dad) > 1):
+            dad = [random.choice(dad)]
+        
+
+        for n in range (len(mom[0])):
+            roll = random.randint(0,1)
+            if (roll < 1):
+                child.append(mom[0][n])
+            else:
+                child.append(dad[0][n])
+    
+
+        return [child]
+    
+    def crossover_elaborate(self, chromo, genepool):
+        child = copy.deepcopy(chromo)
+        dad = random.choice(genepool)[2]
+
+        for x in child:
+
+            for n in range(len(chromo[0])):
+                roll = random.randint(0,1)
+                if (roll < 1):
+                    y = random.choice(dad)
+                    x[n] = y[n]
+
+        if (len(child) > 1):
+            for n in range(len(child)-1):
+                for i in range(len(child)):
+                    if (i > n):
+                        if(self.same_chrom_goals([child[n]],[child[i]])):
+                            return self.crossover_elaborate(chromo, genepool)
+
+        return child
 
     #randomizing between a couple of different ways to mutate a dna strand
-    def mutate_dna(self, dna, genes, i = 22000):
-        n = random.randint(0,99)
-        if (n < 15 and len(dna) > 1):
-            roll = random.randint(0, len(dna) -1)
-            result = copy.deepcopy(dna)
+    def mutate_dna(self, chrom, genes, n = -1):
+        #print(f"in = {self.makeGoalGene(chrom)}")
+        if (n < 0):
+            n = random.randint(0,99)
+    
+        if (n < 10 and len(chrom) > 1):
+            roll = random.randint(0, len(chrom) -1)
+            result = copy.deepcopy(chrom)
             result.pop(roll)
             return result
         
-        elif (n < 40):
-            return self.mutate_dna_randomly(dna)
+        elif (n < 20):
+            return self.crossover_into_one(chrom, genes)
+        
+        elif (n < 50):
+            return self.crossover_elaborate(chrom, genes)
 
-        elif (n < 65):
-            k = random.randint(0, len(genes) -1)
-            return self.mix_dna(dna,genes[k][2])
+        elif (n < 60):
+            k = random.choice(genes)[2]
+            return self.replace_chrom(chrom,k)
+        
+        elif (n < 70):
+            return self.mutate_dna_randomly(chrom)
 
-        elif (n < 75):
+        elif (n < 80):
             return self.mk_random_dna()
             
         elif (n < 90):
-            return self.dna_mitosis(dna)
-            
+            return self.dna_mitosis(chrom)
         else:
-            return self.join_dna(dna,genes)
+            return self.join_dna(chrom,genes)
 
 
     #takes a dna strand and makes it into a goal-gene
@@ -150,6 +222,12 @@ class GiantTortoise:
         for g in dna:
             gg += self.makeGene(g, self.goalPredicates) + "\n"
         return gg
+
+    #takes two chromosomes and check if they produce the same goals
+    def same_chrom_goals(self, chrom1, chrom2):
+        g1 = self.makeGoalGene(chrom1)
+        g2 = self.makeGoalGene(chrom2)
+        return (g1 == g2)
 
     def dna_is_same(self, dna1, dna2):
         count = len(dna2)
@@ -234,9 +312,9 @@ class GiantTortoise:
             temp = len(source[x])
             result.append(temp)
         
-        #print(f"map genome {result}")
         return result
 
+    #if possible returns a gene of a given type from a chromosome
     def digout_dna_by_Signifier_from_chromosome(self, signifier, chromosome):
         p = 1
         for x in self.thesaurus:

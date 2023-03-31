@@ -38,7 +38,7 @@ class FD_Api(Plan_Api):
         self.dom = name_extractor(dom)
         self.prob = name_extractor(prob)
         self.sasPlan = "..\sas_plan"
-        self.searchEngine = "astar(ff(), max_time = 5)"
+        self.searchEngine = "astar(ff(), max_time = 1)"
         #why not give one of these a shot?
         """
             "astar(ff())"

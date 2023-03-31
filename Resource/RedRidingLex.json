@@ -1,19 +1,19 @@
 {
-    "state" : 
+    "plan" : 
     {
         "(share_info" : [1,1],
         "(swallow" : [1,2],
         "(food_coma" : [1,1],
         "(lay_ambush" : [1,2],
-        "(set_trap" : [1,1],
+        "(set_trap" : [1,2],
         "(cesarean" : [1,-2],
-        "(eat_bait" : [1,-1],
+        "(eat_bait" : [1,-2],
         "(push_into_hazzard" : [1,-2],
         "(share_food_while_waiting" : [1,-1],
         "(give_gift" : [1,-1]
     }
     ,
-    "plan": {
+    "state": {
         "(move" : [1,0],
         "isswallowed" : 1,
         "issaved" : -1,
