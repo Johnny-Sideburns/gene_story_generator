@@ -7,8 +7,8 @@ as of now it get's normalized on both x and y coordinates
 
 #linear algebra
 def line(p1, p2, x):
-    m = (p2[1] - p1[1]) / (p2[0] - p1[0])
-    y = m* (p2[0] - x) - p2[1]
+    f = (p2[1] - p1[1]) / (p2[0] - p1[0])
+    y = f* (p2[0] - x) - p2[1]
     return - y
 
 #takes a set of points and linearly fills in points, between the points.
@@ -68,7 +68,7 @@ def normalize_curve(ycurve, xcurve = []):
         n+=1
     return x,y
 
-#takes a list of ints and returns a relative list of floats valued between 0.-1.
+#takes a list of ints and returns a relative list of floats valued between 0. and 1.
 def normalize_int_list(l):
     maxi = max(l)
 
@@ -88,13 +88,9 @@ def standardize_curve(xcurve, ycurve, N = 50):
 
 #compares two lists of points aka. tension curves, by standardizing them, and then seing how they compare. Lower is more alike
 def curve_comparer(curve1, curve2, N = 50, normalize = 'both'):
-
     if normalize == 'both':
         sc1 = standardize_curve(curve1[0],curve1[1], N)
         sc2 = standardize_curve(curve2[0],curve2[1], N)
-    elif (normalize == 'y'):
-        sc1 = curve_chopper((normalize_int_list(curve1[0]),curve1[1]), N)
-        sc2 = curve_chopper((normalize_int_list(curve2[0]),curve2[1]), N)
     else:
         sc1 = curve_chopper(curve1, N)
         sc2 = curve_chopper(curve2, N)

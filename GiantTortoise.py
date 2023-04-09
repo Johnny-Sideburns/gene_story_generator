@@ -161,12 +161,15 @@ class GiantTortoise:
 
         return [child]
     
-    def crossover_elaborate(self, chromo, genepool):
+    def crossover_elaborate(self, chromo, genepool, d = 0):
         child = copy.deepcopy(chromo)
         dad = random.choice(genepool)[2]
 
-        for x in child:
+        if (d > 10):
+            roll = random.randint(50,99)
+            return self.mutate_dna(chromo, genepool, roll)
 
+        for x in child:
             for n in range(len(chromo[0])):
                 roll = random.randint(0,1)
                 if (roll < 1):
@@ -178,7 +181,7 @@ class GiantTortoise:
                 for i in range(len(child)):
                     if (i > n):
                         if(self.same_chrom_goals([child[n]],[child[i]])):
-                            return self.crossover_elaborate(chromo, genepool)
+                            return self.crossover_elaborate(chromo, genepool, d + 1)
 
         return child
 

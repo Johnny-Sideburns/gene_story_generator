@@ -60,9 +60,9 @@ class GeneStoryGenerator:
         self.update_domain_address(self.tmpDom)
 
     #returns a "story", a tuple of a plan, a score and the chromosome
-    def graded_scalable_story(self, c, maxDNALength, show = False, normalize_critic = True):
+    def graded_scalable_story(self, c, maxDNALength, show = False, normalizeCritic = True):
         tmp = self.plan_from_chromosome(c, maxDNALength, show)
-        score = self.critic_holder(tmp ,normalize= normalize_critic)
+        score = self.critic_holder(tmp ,normalize= normalizeCritic)
         return (tmp,score,c)
 
     # takes:
@@ -72,19 +72,23 @@ class GeneStoryGenerator:
     # returns:
     # a list of tupples containing (plan,chromosome,grade) aka stories
 
-    def gene_story(self, initial = 10, noS = 5, breeders = 10, masterGenes = 5, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalize_critic = True, show = False):
+    def gene_story(self, initial = 10, noS = 5, breeders = 10, masterGenes = 5, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalizeCritic = True, show = False):
         storyBook = []
         rejects = []
         arrangedStories = []
 
         for gen in range(maxGenerations):
             if (len(arrangedStories) == 0):
-                arrangedStories = self.the_new_batch(initial,maxDNALength,normalize_critic)
+                arrangedStories = self.the_new_batch(initial,maxDNALength,normalizeCritic)
                 print("the new batch!")
 
             genes = copy.deepcopy(arrangedStories[:breeders])
             genepool = genes + self.split_story_dna(genes)
             
+            currentG = []
+            for g in genes:
+                gg = self.giantTortoise.makeGoalGene(g[2])
+                currentG.append(gg)
             
             nextGen = arrangedStories[:masterGenes]
 
@@ -112,10 +116,10 @@ class GeneStoryGenerator:
                         addit = False
                         break
 
-                #is the dna in the pool of rejects -don't bother adding it
+                #is the dna in the pool of rejects or effectively a clone of one of the parents -don't bother adding it
                 if addit:
                     gg = self.giantTortoise.makeGoalGene(g)
-                    if(gg in rejects):
+                    if(gg in rejects or gg in currentG):
                         addit = False
 
                 #if the dna is valid...
@@ -174,11 +178,11 @@ class GeneStoryGenerator:
         return arrangedStories
 
     #makes a list of n stories
-    def the_new_batch(self, n, maxDNALength,normalize_critic):
+    def the_new_batch(self, n, maxDNALength,normalizeCritic):
         result = []    
         for i in range(n):
             c = self.get_chromosome(maxDNALength)
-            t = self.graded_scalable_story(c,maxDNALength, normalize_critic=normalize_critic)      
+            t = self.graded_scalable_story(c,maxDNALength, normalizeCritic=normalizeCritic)      
             result.append(t)
 
         return result
