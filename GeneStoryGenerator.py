@@ -4,6 +4,7 @@ import GiantTortoise
 import PlanApi
 import ProblemWriter
 import Critic
+from random import choices
 
 class GeneStoryGenerator:
     def __init__(self, data, planApi = PlanApi.Cloud_Planner_Api, tmpProbnm = "tmp/tmpProb.pddl", tmpDomnm = 'tmp/tmpDom.pddl', seed = '', tensionCurve = ([0,1,2,3,4,5,6,7],[0,1,2,4,6,5,2.5,0])):
@@ -44,9 +45,9 @@ class GeneStoryGenerator:
     def custom_problem(self, new_world, prob_name, goal = "", metric = ""):
         """
         if (metric == "" and type(self.planner) is PlanApi.Cloud_Planner_Api):
-            metric = "(:metric minimize (total-cost))\n"
             pass
         """
+        metric = "(:metric minimize (total-cost))\n"
         temp = self.writer.unwrap_dict(new_world)
         self.writer.create_problem_file(prob_name, temp[0], temp[1], goal, metric)
         self.update_problem_address(self.tmpProp)
@@ -60,7 +61,7 @@ class GeneStoryGenerator:
         self.update_domain_address(self.tmpDom)
 
     #returns a "story", a tuple of a plan, a score and the chromosome
-    def graded_scalable_story(self, c, maxDNALength, show = False, normalizeCritic = True):
+    def graded_scalable_story(self, c, maxDNALength, normalizeCritic, show = False):
         tmp = self.plan_from_chromosome(c, maxDNALength, show)
         score = self.critic_holder(tmp ,normalize= normalizeCritic)
         return (tmp,score,c)
@@ -72,7 +73,7 @@ class GeneStoryGenerator:
     # returns:
     # a list of tupples containing (plan,chromosome,grade) aka stories
 
-    def gene_story(self, initial = 10, noS = 5, breeders = 10, masterGenes = 5, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalizeCritic = True, show = False):
+    def gene_story(self, initial = 10, noS = 5, breeders = 10, masterGenes = 5, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalizeCritic = 'both', show = False):
         storyBook = []
         rejects = []
         arrangedStories = []
@@ -92,24 +93,35 @@ class GeneStoryGenerator:
             
             nextGen = arrangedStories[:masterGenes]
 
-            print(f"generation {gen}, genepool {len(genepool)}, blacklist {len(rejects)}")
             kids = 0
+            #random.shuffle(genepool)
+            """
+            """
+            distribution = []
+
+            l = len(genepool)
+
+            for n in range(l):
+                p = l / (n+1) + l
+                distribution.append(p)
 
             while (kids < noC):
 
-                #genepool = copy.deepcopy(genes)
-                
                 if (len(genepool) > 1):
-                    g = random.choice(genepool)
-                    genepool.remove(g)
+                    c = choices(genepool,distribution)[0]
+                    #c = random.choice(genepool)
+                    rest = copy.deepcopy(genepool)
+                    rest.remove(c)
+
                 else:
-                    g = genepool[0]
+                    c = genepool[0]
+                    rest = copy.deepcopy(genepool)
+
                 
-                g = self.giantTortoise.mutate_dna(g[2], genepool)
+                g = self.giantTortoise.mutate_dna(c[2], rest)
+                gg = self.giantTortoise.makeGoalGene(g)
                 addit = True
 
-                #print(f"g {g}")
-                #print(f"g {self.giantTortoise.makeGoalGene(g)}")
                 #is the dna already represented in the generation -don't bother adding it
                 for p in nextGen:
                     if(self.giantTortoise.dna_is_same(p[2], g)):
@@ -118,32 +130,31 @@ class GeneStoryGenerator:
 
                 #is the dna in the pool of rejects or effectively a clone of one of the parents -don't bother adding it
                 if addit:
-                    gg = self.giantTortoise.makeGoalGene(g)
                     if(gg in rejects or gg in currentG):
                         addit = False
 
                 #if the dna is valid...
                 if addit:
                     #... write up the story
-                    g = self.graded_scalable_story(g, maxDNALength, show)
+                    story = self.graded_scalable_story(g, maxDNALength, normalizeCritic,show)
                     
                     #if the story is empty or REALLY bad reject it
-                    if (g[0] == '' or g[1] >= 2):
-                        bg = self.giantTortoise.makeGoalGene(g[2])
-                        if (bg not in rejects):
-                            rejects.append(bg)
+                    if (story[0] == '' or story[1] >= 2):
+                        rejects.append(gg)
+                        pass
 
                     
                     else:
 
                         #if a similar story is currently in the generation, don't add it
                         for s in nextGen:
-                            if g[0] == s[0]:
+                            if story[0] == s[0]:
                                 addit = False
                                 break
                         
                         if (addit):
-                            nextGen.append(g)
+                            nextGen.append(story)
+                            currentG.append(gg)
                 kids += 1
 
             
@@ -156,6 +167,7 @@ class GeneStoryGenerator:
 
             storyBook.sort(key = sortSecond)
 
+            print(f"generation {gen}, genepool {len(genepool)}, blacklist {len(rejects)}, best {storyBook[0][1]}")
             n = 0
             for story in storyBook:
                 grade = story[1]
@@ -163,6 +175,7 @@ class GeneStoryGenerator:
                 #if the grade of the story is sufficiently bad, add it to rejects, maybe kick it..
                 if (grade >= 2):
                     bg = self.giantTortoise.makeGoalGene(story[2])
+                    
                     if (bg not in rejects):
                             rejects.append(bg)
                     if (len(arrangedStories) < breeders):

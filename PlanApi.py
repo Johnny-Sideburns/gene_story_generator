@@ -38,7 +38,7 @@ class FD_Api(Plan_Api):
         self.dom = name_extractor(dom)
         self.prob = name_extractor(prob)
         self.sasPlan = "..\sas_plan"
-        self.searchEngine = "astar(ff(), max_time = 15)"
+        self.searchEngine = "astar(ff(), max_time = 5)"
         #why not give one of these a shot?
         """
             "astar(ff())"
@@ -46,10 +46,10 @@ class FD_Api(Plan_Api):
             "astar(blind())"
             "astar(cg())"
             "eager(epsilon_greedy(cea()))"
-
+            "astar(ff(), max_time = 15)"
             "astar(cg(max_cache_size=1000000, transform=no_transform(), cache_estimates=true),max_time = 50)"
             "astar(cg(max_cache_size=1000,cache_estimates=true))"
-
+            "lazy_greedy([ff(), cea()], max_time = 15, preferred=[ff(), cea()])"
             "astar(ff(transform=no_transform(), cache_estimates=true))"
             "lazy_greedy([ff(), cea()], max_time = 5, preferred=[ff(), cea()])"
         """

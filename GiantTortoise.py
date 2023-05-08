@@ -70,8 +70,8 @@ class GiantTortoise:
                 gene.append(temp)
         return [gene]
 
-    #takes two chromosomes, and replaces a random chromosome from the first with a chromosome of the seccond
-    def replace_chrom(self, dna1, dna2):
+    #takes two chromosomes, and replaces a random genefrom the first with a gene of the seccond
+    def replace_gene(self, dna1, dna2):
         roll = random.randint(0, len(dna1) -1)
         roll2 = random.randint(0, len(dna1[roll]) -1)
         roll3 = random.randint(0, len(dna2) -1)
@@ -83,7 +83,7 @@ class GiantTortoise:
     def join_dna(self, host, genes, n = 0):
         #this limits how many chromosomes will be allowed to be joined together
         #and how many times to try doing it unsuccesfully
-        if (len(host) > 3 or n > 50):
+        if (len(host) > 3 or n > 10):
             return self.mutate_dna(host,genes, random.randint(0,89))
         
         doner = random.choice(genes)[2]
@@ -98,22 +98,6 @@ class GiantTortoise:
         
         return child
 
-
-        """
-        if (len(dna1) > 3 or n > 7):
-                 return self.mutate_dna(dna1, genes)
-        k = random.randint(0, len(genes) -1)
-        dna2 = genes[k][2]
-        roll = random.randint(0, len(dna2) -1)
-        
-        if (not self.dna_in_dnas(dna1,[dna2[roll]])):
-            result = copy.deepcopy(dna1)
-            result.append(copy.deepcopy(dna2[roll]))
-            return result
-        n += 1
-        return self.join_dna(dna1,genes, n)
-        """
-
     #takes a chromosome and spawns a new random chromosome alongside it
     def dna_mitosis(self, dna, n = 0):
         result = copy.deepcopy(dna)
@@ -122,19 +106,28 @@ class GiantTortoise:
             result.pop(roll0) 
         roll = random.choice(result)
         temp = self.mutate_dna_randomly([roll])
+        if (n > 5):
+            return temp
         if (self.same_chrom_goals(temp, result)):
-            return self.dna_mitosis(result)
+            return self.dna_mitosis(result, n+1)
         else:
             result = result + temp
-            #print(self.makeGoalGene(result))
             return result
 
     #takes a chromosome and shuffles a random gene
-    def mutate_dna_randomly(self, dna):
+    def mutate_dna_randomly(self, dna, n = 0):
+        if (n > 5):
+            return self.mk_random_dna()
         roll = random.randint(0,len(dna)-1)
         roll2 = random.randint(0,len(dna[roll])-1)
         temp = copy.deepcopy(dna)
         random.shuffle(temp[roll][roll2])
+        
+        for g in range(len(dna)):
+            if self.same_chrom_goals([temp[roll]], [dna[g]]):
+                self.mutate_dna_randomly(dna, n+1)
+                break
+
         return temp
     
     #takes two chromosomes and takes genes at random from each to construct a new chromosome
@@ -187,7 +180,6 @@ class GiantTortoise:
 
     #randomizing between a couple of different ways to mutate a dna strand
     def mutate_dna(self, chrom, genes, n = -1):
-        #print(f"in = {self.makeGoalGene(chrom)}")
         if (n < 0):
             n = random.randint(0,99)
     
@@ -205,7 +197,7 @@ class GiantTortoise:
 
         elif (n < 60):
             k = random.choice(genes)[2]
-            return self.replace_chrom(chrom,k)
+            return self.replace_gene(chrom,k)
         
         elif (n < 70):
             return self.mutate_dna_randomly(chrom)

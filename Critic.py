@@ -43,13 +43,13 @@ def curve_chopper(curve, N = 50):
     return (xline,yline)
 
 #takes a list of points and changes it's size to be between 0-1
-def normalize_curve(ycurve, xcurve = []):
-    maxy = max(ycurve)
+def normalize_curve(ycurve, xcurve = [], r = 1):
+    maxy = max(ycurve) *r
 
     if(maxy == 0 and abs(min(ycurve)) == 0):
-        maxy = 1
+        maxy = 1 * r
     elif (maxy < abs(min(ycurve))):
-        maxy = abs(min(ycurve))
+        maxy = abs(min(ycurve)) *r
 
     if (len(ycurve) != len(xcurve)):
         maxx = len(ycurve) -1
@@ -83,14 +83,17 @@ def normalize_int_list(l):
 
 
 #uses previous functions to standerdize a list of points, by setting values to be between 0-1 and setting the no. of points to N
-def standardize_curve(xcurve, ycurve, N = 50):
-        return curve_chopper((normalize_curve(ycurve, xcurve)), N)
+def standardize_curve(xcurve, ycurve, N = 50, r = 1):
+        return curve_chopper((normalize_curve(ycurve, xcurve, r)), N)
 
 #compares two lists of points aka. tension curves, by standardizing them, and then seing how they compare. Lower is more alike
 def curve_comparer(curve1, curve2, N = 50, normalize = 'both'):
     if normalize == 'both':
         sc1 = standardize_curve(curve1[0],curve1[1], N)
         sc2 = standardize_curve(curve2[0],curve2[1], N)
+    elif normalize == 'relative':
+        sc1 = standardize_curve(curve1[0],curve1[1], N, len(curve1[0]))
+        sc2 = standardize_curve(curve2[0],curve2[1], N, len(curve2[0]))
     else:
         sc1 = curve_chopper(curve1, N)
         sc2 = curve_chopper(curve2, N)

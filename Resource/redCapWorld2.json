@@ -9,13 +9,13 @@
         {
             "name": "forrest",
             "predicates": {
-                "atloc": ["grandmas_house", "meadow"]
+                "atloc": ["grandmas_house", "meadow", "hunting_lodge"]
             }
         },
         {
             "name": "grandmas_house",
             "predicates": {
-                "atloc": ["rocks"]
+                "atloc": ["rocks","troth"]
             }
         },
         {
@@ -29,7 +29,13 @@
             "predicates": { 
                 "atloc": ["flowers"]
             }
-        }
+        },
+        {
+            "name": "hunting_lodge",
+            "predicates": {
+                "atloc": []
+            }
+        }        
     ],
     "- character": [
         {
@@ -62,7 +68,7 @@
                 "hate" : ["bigbadwolf"],
                 "inventory": ["gun", "axe"],
                 "whereabouts": [
-                    "forrest"
+                    "hunting_lodge"
                 ]
             }
         },
@@ -123,6 +129,12 @@
     "- gift": [
         {
             "name" :"flowers",
+            "predicates": {}
+        }
+    ],
+    "- trap": [
+        {
+            "name" :"troth",
             "predicates": {}
         }
     ]
