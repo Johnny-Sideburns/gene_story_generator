@@ -78,7 +78,7 @@
                 "cangobble": 1,
                 "ishungry": 1,
                 "inventory": [],
-                "hate" : ["hunter"],
+                "hate" : ["hunter","grandma"],
                 "oblivious": ["grandmas_house"],
                 "whereabouts": [
                     "forrest"

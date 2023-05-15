@@ -73,7 +73,7 @@ class GeneStoryGenerator:
     # returns:
     # a list of tupples containing (plan,chromosome,grade) aka stories
 
-    def gene_story(self, initial = 10, noS = 5, breeders = 10, masterGenes = 5, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalizeCritic = 'both', show = False):
+    def gene_story(self, initial = 10, noS = 5, breeders = 10, masterGenes = 5, noC = 20, maxGenerations = 100, maxDNALength = 10, acceptanceCriteria = -1, normalizeCritic = 'both', show = False, printit = True):
         storyBook = []
         rejects = []
         arrangedStories = []
@@ -81,7 +81,8 @@ class GeneStoryGenerator:
         for gen in range(maxGenerations):
             if (len(arrangedStories) == 0):
                 arrangedStories = self.the_new_batch(initial,maxDNALength,normalizeCritic)
-                print("the new batch!")
+                if printit:
+                    print("the new batch!")
 
             genes = copy.deepcopy(arrangedStories[:breeders])
             genepool = genes + self.split_story_dna(genes)
@@ -94,9 +95,7 @@ class GeneStoryGenerator:
             nextGen = arrangedStories[:masterGenes]
 
             kids = 0
-            #random.shuffle(genepool)
-            """
-            """
+        
             distribution = []
 
             l = len(genepool)
@@ -166,8 +165,9 @@ class GeneStoryGenerator:
                     storyBook.append(s)
 
             storyBook.sort(key = sortSecond)
-
-            print(f"generation {gen}, genepool {len(genepool)}, blacklist {len(rejects)}, best {storyBook[0][1]}")
+            if printit:
+                print(f"generation {gen}, genepool {len(genepool)}, blacklist {len(rejects)}, best {storyBook[0][1]}")
+            
             n = 0
             for story in storyBook:
                 grade = story[1]
@@ -185,10 +185,10 @@ class GeneStoryGenerator:
                 if(grade < acceptanceCriteria):
                     n += 1
                     if (n == noS):
-                        return storyBook
+                        return (storyBook, gen)
                 arrangedStories.append(story)
 
-        return arrangedStories
+        return (arrangedStories, gen)
 
     #makes a list of n stories
     def the_new_batch(self, n, maxDNALength,normalizeCritic):
