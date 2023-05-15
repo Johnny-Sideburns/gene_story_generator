@@ -9,15 +9,12 @@ IMPORTANT!:
     so sending too many requests might be considered bad form.
 
 enjoy.
-
-
 """
 import GeneStoryGenerator
 import PlanApi
 import time
 import PDDLAccessor
 import pprint
-
 
 
 #This is a tiny example of running a pddl with the api
@@ -29,7 +26,6 @@ papi = PlanApi.FD_Api(exampledom,exampleprop)
 plan = papi.get_plan()
 
 print(plan)
-
 
 #different data sets
 dom = "Resource/redcapdomExpanded.pddl"
@@ -60,9 +56,8 @@ with fast downward or cloudplanner(default)
 gsg = GeneStoryGenerator.GeneStoryGenerator(data2, seed = '', tensionCurve = tc5)
 #gsg = GeneStoryGenerator.GeneStoryGenerator(data2, seed = '', tensionCurve = tc5, planApi=PlanApi.FD_Api)
 
-
 #example of applying a specific goal
-goal1 = "(isdead bigbadwolf) (inventory flowers grandma) (issaved redcap)"
+goal1 = "(isdead bigbadwolf) (not (issick grandma)) (issaved redcap)"
 gsg.custom_problem(gsg.world,gsg.tmpProp, goal1)
 plan = gsg.run_planner()
 
@@ -71,7 +66,6 @@ print(plan)
 print(gsg.critic_holder(PDDLAccessor.plan_splitter(plan),normalize='both'))
 print(gsg.critic_holder(PDDLAccessor.plan_splitter(plan),normalize='relative'))
 print()
-
 
 t1 = time.time()
 #running the gene story generator
@@ -89,3 +83,35 @@ for s in stories:
 t2 = time.time()
 
 t = t2 - t1
+
+
+
+
+
+
+
+"""
+
+
+
+    (move bigbadwolf forest path path)
+    (share_info redcap mom moms_house path)
+    (move redcap moms_house path path)
+    (share_info bigbadwolf redcap path grandmas_house)
+    (move bigbadwolf path forest path)
+    (move redcap path forest path)
+    (share_info redcap bigbadwolf forest meadow)
+    (move redcap forest meadow forest)
+    (pick_up redcap flowers meadow)
+    (move redcap meadow forest forest)
+    (move bigbadwolf forest grandmas_house forest)
+    (move redcap forest grandmas_house forest)
+    (lay_ambush bigbadwolf grandmas_house)
+    (pick_up redcap rocks grandmas_house)
+    (set_trap redcap bigbadwolf troth cake rocks grandmas_house)
+    (give redcap grandma wine grandmas_house)
+    (give_gift redcap grandma flowers grandmas_house)
+    (share_food_while_waiting grandma redcap wine grandmas_house)
+    (eat_bait bigbadwolf troth grandmas_house)
+    (expire bigbadwolf grandmas_house)
+"""
