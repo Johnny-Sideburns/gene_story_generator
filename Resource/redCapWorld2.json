@@ -3,11 +3,11 @@
         {
             "name": "path",
             "predicates": {
-                "atloc": ["moms_house", "forrest"]
+                "atloc": ["moms_house", "forest"]
             }
         },
         {
-            "name": "forrest",
+            "name": "forest",
             "predicates": {
                 "atloc": ["grandmas_house", "meadow", "hunting_lodge"]
             }
@@ -81,7 +81,7 @@
                 "hate" : ["hunter","grandma"],
                 "oblivious": ["grandmas_house"],
                 "whereabouts": [
-                    "forrest"
+                    "forest"
                 ]
             }
         },

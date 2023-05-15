@@ -16,8 +16,7 @@ import GeneStoryGenerator
 import PlanApi
 import time
 import PDDLAccessor
-import json 
-
+import pprint
 
 
 
@@ -56,69 +55,37 @@ tc5 = ([0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,4,2,0])
 """
 Initiating the genestory generator
 with fast downward or cloudplanner(default)
+    or with a planner of choice as long as an api is added to the planApi
 """
-#gsg = GeneStoryGenerator.GeneStoryGenerator(data2, seed = '', tensionCurve = tc5)
-gsg = GeneStoryGenerator.GeneStoryGenerator(data2, seed = '', tensionCurve = tc5, planApi=PlanApi.FD_Api)
+gsg = GeneStoryGenerator.GeneStoryGenerator(data2, seed = '', tensionCurve = tc5)
+#gsg = GeneStoryGenerator.GeneStoryGenerator(data2, seed = '', tensionCurve = tc5, planApi=PlanApi.FD_Api)
 
+
+#example of applying a specific goal
 goal1 = "(isdead bigbadwolf) (inventory flowers grandma) (issaved redcap)"
 gsg.custom_problem(gsg.world,gsg.tmpProp, goal1)
 plan = gsg.run_planner()
 
+#and printing the plan with two different ways of comparing the curves
 print(plan)
 print(gsg.critic_holder(PDDLAccessor.plan_splitter(plan),normalize='both'))
 print(gsg.critic_holder(PDDLAccessor.plan_splitter(plan),normalize='relative'))
 print()
 
-gsg.custom_problem(gsg.world,gsg.tmpProp,"(not (issick grandma)) (isdead bigbadwolf)")
 
-plan = gsg.run_planner()
+t1 = time.time()
+#running the gene story generator
+stories = gsg.gene_story(initial = 50, maxGenerations= 100, acceptanceCriteria= 0.007, noS= 3, noC=75, maxDNALength=10, masterGenes=10, breeders = 30, normalizeCritic='both',printit = True)
 
-print(plan)
-print(gsg.critic_holder(PDDLAccessor.plan_splitter(plan),normalize='both'))
-print(gsg.critic_holder(PDDLAccessor.plan_splitter(plan),normalize='relative'))
-print()
-"""
-"""
+stories = stories[0][:5]
+stories.reverse()
 
-for n in range(100):
+#and printing the stories and grades
+for s in stories:
+    print()
+    pprint.pprint(s[0])
+    print(s[1])
 
-    t1 = time.time()
-    #running the gene story generator
-    stories = gsg.gene_story(initial = 50, maxGenerations= 100, acceptanceCriteria= 0.007, noS= 3, noC=75, maxDNALength=10, masterGenes=10, breeders = 30, normalizeCritic='both',printit = False)
+t2 = time.time()
 
-    grade = stories[0][0][1]
-    story = stories[0][0][0]
-
-    generations = stories[1]
-    stories = stories[0][:5]
-
-    stories.reverse()
-    """
-    for s in stories:
-        print()
-        pprint.pprint(s[0])
-        print(s[1])
-        goal = gsg.giantTortoise.makeGoalGene(s[2])
-        print(goal)
-    """
-
-    t2 = time.time()
-
-    t = t2 - t1
-
-    print(f"\nbest: {grade} in {generations} and {t} seconds")
-
-    result = {
-        "time" : t,
-        "generations" : generations,
-        "best" : grade,
-        "story" : story
-            }
-
-    results = json.load(open("tmp/results.json"))
-    results.append(result)
-
-    with open("tmp/results.json", 'w') as file:
-        
-        json.dump(results, file)
-
+t = t2 - t1
