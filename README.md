@@ -1,7 +1,6 @@
 # Gene story generator
 # to run:
-# to be implemented
+# go to the runner.py script and chose data-sets and specifics and run it
 
-# current version is dependant on having a working version of fastdownward in parrent directory
 # millage may varry
 # no direct support/guarantee for non windows systems
