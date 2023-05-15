@@ -57,7 +57,7 @@ gsg = GeneStoryGenerator.GeneStoryGenerator(data2, seed = '', tensionCurve = tc5
 #gsg = GeneStoryGenerator.GeneStoryGenerator(data2, seed = '', tensionCurve = tc5, planApi=PlanApi.FD_Api)
 
 #example of applying a specific goal
-goal1 = "(isdead bigbadwolf) (not (issick grandma)) (issaved redcap)"
+goal1 = "(isdead bigbadwolf) (inventory flowers grandma) (issaved redcap)"
 gsg.custom_problem(gsg.world,gsg.tmpProp, goal1)
 plan = gsg.run_planner()
 
